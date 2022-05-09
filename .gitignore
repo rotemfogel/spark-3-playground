@@ -1,0 +1,15 @@
+*.class
+*.log
+
+# IDEA/sbt
+.idea/
+project/project
+project/target
+target/
+
+*.lst
+
+# BSP support
+out/
+.bloop/
+.bsp/

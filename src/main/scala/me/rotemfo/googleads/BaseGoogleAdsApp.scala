@@ -10,6 +10,10 @@ import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
 
 abstract class BaseGoogleAdsApp extends ParquetReaderApplication {
 
+  /** output column of adGroup.labels array
+    */
+  protected lazy val adGroupLabels: String = "ad_group_labels"
+
   case class CompoundColumn(snakeName: String, field: StructField)
 
   /** schema to define which columns to convert from Null to Zero

@@ -16,7 +16,7 @@ import scopt.OptionParser
 
 object DeequTest extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
 
-  override protected def invoke(p: EmptyConfig, spark: SQLContext): Unit = {
+  override protected def invoke(implicit p: EmptyConfig, spark: SQLContext): Unit = {
     import spark.sparkSession.implicits._
 
     val orders = Seq(
@@ -39,15 +39,20 @@ object DeequTest extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
     idColumnProfile.asInstanceOf[NumericColumnProfile].minimum equals Some(1)
     idColumnProfile.asInstanceOf[NumericColumnProfile].maximum equals Some(5)
     val labelColumnProfile = suggestionResult.columnProfiles("label")
-    labelColumnProfile.asInstanceOf[StandardColumnProfile].typeCounts equals Map("Boolean" -> 0,
-      "Fractional" -> 0, "Integral" -> 0, "Unknown" -> 0, "String" -> 6)
+    labelColumnProfile.asInstanceOf[StandardColumnProfile].typeCounts equals Map(
+      "Boolean"    -> 0,
+      "Fractional" -> 0,
+      "Integral"   -> 0,
+      "Unknown"    -> 0,
+      "String"     -> 6
+    )
     val statusColumnProfile = suggestionResult.columnProfiles("status")
-    val statusHistogram = statusColumnProfile.asInstanceOf[StandardColumnProfile].histogram
+    val statusHistogram     = statusColumnProfile.asInstanceOf[StandardColumnProfile].histogram
     statusHistogram.isDefined equals true
     statusHistogram.get.values equals Map(
       "CONFIRMED" -> DistributionValue(4, 0.6666666666666666),
-      "PENDING" -> DistributionValue(1, 0.16666666666666666),
-      "DELETED" -> DistributionValue(1, 0.16666666666666666)
+      "PENDING"   -> DistributionValue(1, 0.16666666666666666),
+      "DELETED"   -> DistributionValue(1, 0.16666666666666666)
     )
 
     val metricsRepository = new InMemoryMetricsRepository()
@@ -104,7 +109,6 @@ object DeequTest extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
     //|Dataset|       *|Size| 14.0|1579069527611|
     //+-------+--------+----+-----+-------------+
 
-
     nowKey = ResultKey(System.currentTimeMillis())
     val verificationResult = VerificationSuite()
       .onData(orders)
@@ -113,20 +117,23 @@ object DeequTest extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
           // Some<SIZE> --> custom prefix that you can add to the validation result message
           .hasSize(itemsCount => itemsCount == 5, Some("<SIZE>"))
           // Ensure uniqueness of the order id
-          .isComplete("id").isUnique("id")
+          .isComplete("id")
+          .isUnique("id")
           // Ensure completness (NOT NULL) of productName which is missing in the dataset!
           .isComplete("productName")
           // Ensure all statuses are contained in the array
           .isContainedIn("status", Array("CONFIRMED", "DELETED", "PENDING"))
           // Ensure that the max amount is positive and at most 100
-          .isNonNegative("amount").hasMax("amount", amount => amount == 100d)
+          .isNonNegative("amount")
+          .hasMax("amount", amount => amount == 100d)
       )
       .run()
     verificationResult.status equals CheckStatus.Error
 
     val resultsForAllConstraints = verificationResult.checkResults
       .flatMap { case (_, checkResult) => checkResult.constraintResults }
-    val successfulConstraints = resultsForAllConstraints.filter(result => result.status == ConstraintStatus.Success)
+    val successfulConstraints = resultsForAllConstraints
+      .filter(result => result.status == ConstraintStatus.Success)
       .map(result => result.constraint.asInstanceOf[NamedConstraint].toString())
     successfulConstraints.size equals 2
     Array(
@@ -135,7 +142,8 @@ object DeequTest extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
         "NULL OR `status` IN ('CONFIRMED','DELETED','PENDING'),None))"
     ).foreach(l => successfulConstraints.toSeq.contains(l))
 
-    val failedConstraints = resultsForAllConstraints.filter(result => result.status != ConstraintStatus.Success)
+    val failedConstraints = resultsForAllConstraints
+      .filter(result => result.status != ConstraintStatus.Success)
       .map(result => result.constraint.asInstanceOf[NamedConstraint].toString())
     failedConstraints.size equals 5
     Array(

@@ -16,20 +16,24 @@ import scala.util.Random
 
 object SummaryApp extends ParquetReaderApplication {
 
-  private lazy val statsSchema = StructType(Seq(
-    StructField("entity", StringType, nullable = false),
-    StructField("instance", StringType, nullable = false),
-    StructField("name", StringType, nullable = false),
-    StructField("value", DoubleType, nullable = true)
-  ))
+  private lazy val statsSchema = StructType(
+    Seq(
+      StructField("entity", StringType, nullable = false),
+      StructField("instance", StringType, nullable = false),
+      StructField("name", StringType, nullable = false),
+      StructField("value", DoubleType, nullable = true)
+    )
+  )
 
-  override protected def invoke(p: ReaderConfig, spark: SQLContext): Unit = {
+  override protected def invoke(implicit p: ReaderConfig, spark: SQLContext): Unit = {
     lazy val session: SparkSession = spark.sparkSession
 
     def stats(): Unit = {
-      val df = spark.read.parquet(p.inputLocation.get).select("event_type", "event_source", "event_action")
+      val df =
+        spark.read.parquet(p.inputLocation.get).select("event_type", "event_source", "event_action")
       val columns = df.schema.fieldNames
-      val emptyStatsDf: DataFrame = session.createDataFrame(spark.sparkContext.emptyRDD[Row], statsSchema)
+      val emptyStatsDf: DataFrame =
+        session.createDataFrame(spark.sparkContext.emptyRDD[Row], statsSchema)
 
       val statsDf = columns.foldLeft(emptyStatsDf) { (_, column) =>
         val analysisResult: AnalyzerContext = {
@@ -52,12 +56,12 @@ object SummaryApp extends ParquetReaderApplication {
 
     def anomalyDetection(): Unit = {
       val yesterday = Range.inclusive(1, 100).map(_ => Random.nextDouble)
-      val today = yesterday.drop(20).map(_ => Random.nextDouble)
+      val today     = yesterday.drop(20).map(_ => Random.nextDouble)
       import spark.implicits._
-      val todayDf = spark.sparkContext.parallelize(today).toDF("val")
+      val todayDf     = spark.sparkContext.parallelize(today).toDF("val")
       val yesterdayDf = spark.sparkContext.parallelize(yesterday).toDF("val")
 
-      val todayKey = ResultKey(todayDf.hashCode())
+      val todayKey      = ResultKey(todayDf.hashCode())
       val yesterdaysKey = ResultKey(yesterdayDf.hashCode())
 
       val metricsRepository = new InMemoryMetricsRepository()
@@ -66,9 +70,7 @@ object SummaryApp extends ParquetReaderApplication {
         .onData(yesterdayDf)
         .useRepository(metricsRepository)
         .saveOrAppendResult(yesterdaysKey)
-        .addAnomalyCheck(
-          RelativeRateOfChangeStrategy(maxRateIncrease = Some(2.0)),
-          Size())
+        .addAnomalyCheck(RelativeRateOfChangeStrategy(maxRateIncrease = Some(2.0)), Size())
         .run()
 
       val verificationResult =
@@ -76,9 +78,7 @@ object SummaryApp extends ParquetReaderApplication {
           .onData(todayDf)
           .useRepository(metricsRepository)
           .saveOrAppendResult(todayKey)
-          .addAnomalyCheck(
-            RelativeRateOfChangeStrategy(maxRateIncrease = Some(2.0)),
-            Size())
+          .addAnomalyCheck(RelativeRateOfChangeStrategy(maxRateIncrease = Some(2.0)), Size())
           .run()
 
       if (verificationResult.status != Success) {

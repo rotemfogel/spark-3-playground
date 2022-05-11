@@ -6,14 +6,13 @@ import org.apache.spark.ml.evaluation.ClusteringEvaluator
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import scopt.OptionParser
 
-object ClusteringApp
-  extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
+object ClusteringApp extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
 
-  override protected def invoke(p: EmptyConfig, spark: SQLContext): Unit = {
+  override protected def invoke(implicit p: EmptyConfig, spark: SQLContext): Unit = {
     def kMeans(dataset: DataFrame): Unit = {
       // Trains a k-means model.
       val kmeans = new KMeans().setK(2).setSeed(1L)
-      val model = kmeans.fit(dataset)
+      val model  = kmeans.fit(dataset)
 
       // Make predictions
       val predictions = model.transform(dataset)
@@ -31,7 +30,7 @@ object ClusteringApp
 
     def bisectingKMeans(dataset: DataFrame): Unit = {
       // Trains a bisecting k-means model.
-      val bkm = new BisectingKMeans().setK(2).setSeed(1)
+      val bkm   = new BisectingKMeans().setK(2).setSeed(1)
       val model = bkm.fit(dataset)
 
       // Make predictions
@@ -57,18 +56,21 @@ object ClusteringApp
 
       // output parameters of mixture model model
       for (i <- 0 until model.getK) {
-        println(s"Gaussian $i:\nweight=${model.weights(i)}\n" +
-          s"mu=${model.gaussians(i).mean}\nsigma=\n${model.gaussians(i).cov}\n")
+        println(
+          s"Gaussian $i:\nweight=${model.weights(i)}\n" +
+            s"mu=${model.gaussians(i).mean}\nsigma=\n${model.gaussians(i).cov}\n"
+        )
       }
     }
 
     def lda(): Unit = {
       // Loads data.
-      val dataset = spark.read.format("libsvm")
+      val dataset = spark.read
+        .format("libsvm")
         .load("data/mllib/sample_lda_libsvm_data.txt")
 
       // Trains a LDA model.
-      val lda = new LDA().setK(10).setMaxIter(10)
+      val lda   = new LDA().setK(10).setMaxIter(10)
       val model = lda.fit(dataset)
 
       val ll = model.logLikelihood(dataset)

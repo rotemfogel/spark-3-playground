@@ -4,6 +4,7 @@ object CommonSchema {
   // @formatter:off
   lazy val colAbsoluteTopImpressionPercentage: String = "absoluteTopImpressionPercentage"
   lazy val colAdGroup: String                         = "adGroup"
+  lazy val colAdNetworkType: String                   = "adNetworkType"
   lazy val colAllConversions: String                  = "allConversions"
   lazy val colAverageCpc: String                      = "averageCpc"
   lazy val colBaseAdGroup: String                     = "baseAdGroup"
@@ -14,7 +15,10 @@ object CommonSchema {
   lazy val colCostMicros: String                      = "costMicros"
   lazy val colCrossDeviceConversions: String          = "crossDeviceConversions"
   lazy val colCtr: String                             = "ctr"
+  lazy val colCustomer: String                        = "customer"
   lazy val colDate: String                            = "date"
+  lazy val colDevice: String                          = "device"
+  lazy val colEngagements: String                     = "engagements"
   lazy val colId: String                              = "id"
   lazy val colImpressions: String                     = "impressions"
   lazy val colInteractions: String                    = "interactions"

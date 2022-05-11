@@ -7,7 +7,6 @@ import org.apache.spark.sql.types._
 object KeywordsSchema {
   // @formatter:off
   lazy val colAdGroupCriterion: String                  = "adGroupCriterion"
-  lazy val colEngagements: String                       = "engagements"
   lazy val colHistoricalCreativeQualityScore: String    = "historicalCreativeQualityScore"
   lazy val colHistoricalLandingPageQualityScore: String = "historicalLandingPageQualityScore"
   lazy val colHistoricalQualityScore: String            = "historicalQualityScore"
@@ -18,7 +17,17 @@ object KeywordsSchema {
   lazy val colSearchTopImpressionShare: String          = "searchTopImpressionShare"
   lazy val colText: String                              = "text"
   // @formatter:on
-
+  lazy val keywordsViewSchema: StructType =
+    StructType(
+      Seq(
+        StructField(colCampaign, campaignStruct, nullable = true),
+        StructField(colAdGroup, adGroupStruct, nullable = true),
+        StructField(colMetrics, metricsStruct, nullable = true),
+        // StructField(colAdGroupCriterion, adGroupCriterionStruct, nullable = true),
+        StructField(colSegments, segmentsStruct, nullable = true),
+        StructField(colKeywordsView, keywordsViewStruct, nullable = true)
+      )
+    )
   private lazy val campaignStruct: StructType =
     StructType(
       Seq(
@@ -33,7 +42,6 @@ object KeywordsSchema {
         StructField(colStatus, StringType, nullable = true)
       )
     )
-
   private lazy val adGroupStruct: StructType =
     StructType(
       Seq(
@@ -50,6 +58,17 @@ object KeywordsSchema {
       )
     )
 
+  //  private lazy val adGroupCriterionStruct: StructType =
+  //    StructType(
+  //      Seq(
+  //        StructField(colKeyword, StructType(
+  //          Seq(
+  //            StructField(colMatchType, StringType, nullable = true),
+  //            StructField(colText, StringType, nullable = true)
+  //          )
+  //        ), nullable = true)
+  //      )
+  //    )
   private lazy val metricsStruct: StructType =
     StructType(
       Seq(
@@ -70,42 +89,16 @@ object KeywordsSchema {
         StructField(colVideoViews, LongType, nullable = true)
       )
     )
-
-  //  private lazy val adGroupCriterionStruct: StructType =
-  //    StructType(
-  //      Seq(
-  //        StructField(colKeyword, StructType(
-  //          Seq(
-  //            StructField(colMatchType, StringType, nullable = true),
-  //            StructField(colText, StringType, nullable = true)
-  //          )
-  //        ), nullable = true)
-  //      )
-  //    )
-
   private lazy val segmentsStruct: StructType =
     StructType(
       Seq(
         StructField(colDate, StringType, nullable = true)
       )
     )
-
   private lazy val keywordsViewStruct: StructType =
     StructType(
       Seq(
         StructField(colResourceName, StringType, nullable = true)
-      )
-    )
-
-  lazy val keywordsViewSchema: StructType =
-    StructType(
-      Seq(
-        StructField(colCampaign, campaignStruct, nullable = true),
-        StructField(colAdGroup, adGroupStruct, nullable = true),
-        StructField(colMetrics, metricsStruct, nullable = true),
-        // StructField(colAdGroupCriterion, adGroupCriterionStruct, nullable = true),
-        StructField(colSegments, segmentsStruct, nullable = true),
-        StructField(colKeywordsView, keywordsViewStruct, nullable = true)
       )
     )
 }

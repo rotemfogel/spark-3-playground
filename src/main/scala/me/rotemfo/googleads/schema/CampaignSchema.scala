@@ -6,7 +6,6 @@ import org.apache.spark.sql.types._
 //noinspection DuplicatedCode
 object CampaignSchema {
   // @formatter:off
-  lazy val colAdNetworkType: String          = "adNetworkType"
   lazy val colAdvertisingChannelType: String = "advertisingChannelType"
   lazy val colAmountMicros: String           = "amountMicros"
   lazy val colBiddingStrategyType: String    = "biddingStrategyType"

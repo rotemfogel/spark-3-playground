@@ -10,19 +10,23 @@ import java.time.{LocalDate, LocalDateTime}
 
 object StamApp extends ParquetReaderApplication {
 
-  override protected def invoke(p: ReaderConfig, spark: SQLContext): Unit = {
+  override protected def invoke(implicit p: ReaderConfig, spark: SQLContext): Unit = {
     val start = LocalDate.of(2021, 1, 1)
-    val now = LocalDateTime.now()
-    val end = now.toLocalDate
-    val df = spark.read.table("dbl.page_events").where(
-      col("category").isin("page_view", "page_event") &&
-        col("to_copy") === lit(1) &&
-        col("date_").between(Date.valueOf(start), Date.valueOf(end)))
+    val now   = LocalDateTime.now()
+    val end   = now.toLocalDate
+    val df = spark.read
+      .table("dbl.page_events")
+      .where(
+        col("category").isin("page_view", "page_event") &&
+          col("to_copy") === lit(1) &&
+          col("date_").between(Date.valueOf(start), Date.valueOf(end))
+      )
       .select("date_", "user_id", "machine_cookie", "machine_cookie_int")
       .where(
         col("user_id") > lit(0) &&
           col("machine_cookie").isNotNull &&
-          col("machine_cookie_int").isNotNull)
+          col("machine_cookie_int").isNotNull
+      )
       .repartitionByRange(24, col("user_id"), col("machine_cookie"))
 
     df.groupBy("user_id", "machine_cookie", "machine_cookie_int")

@@ -7,12 +7,20 @@ import org.apache.spark.sql.types._
 object GeoSchema {
   // @formatter:off
   lazy val colCountryCriterionId: String = "countryCriterionId"
-  lazy val colDevice: String             = "device"
   lazy val colGeographicView: String     = "geographicView"
   lazy val colLocationType: String       = "locationType"
   lazy val colStartDate: String          = "startDate"
   // @formatter:on
-
+  lazy val geographicViewSchema: StructType =
+    StructType(
+      Seq(
+        StructField(colCampaign, campaignStruct, nullable = true),
+        StructField(colAdGroup, adGroupStruct, nullable = true),
+        StructField(colMetrics, metricsStruct, nullable = true),
+        StructField(colSegments, segmentsStruct, nullable = true),
+        StructField(colGeographicView, geographicViewStruct, nullable = true)
+      )
+    )
   private lazy val campaignStruct: StructType =
     StructType(
       Seq(
@@ -21,7 +29,6 @@ object GeoSchema {
         StructField(colStartDate, StringType, nullable = true)
       )
     )
-
   private lazy val adGroupStruct: StructType =
     StructType(
       Seq(
@@ -29,7 +36,6 @@ object GeoSchema {
         StructField(colName, StringType, nullable = true)
       )
     )
-
   private lazy val metricsStruct: StructType =
     StructType(
       Seq(
@@ -45,7 +51,6 @@ object GeoSchema {
         StructField(colViewThroughConversions, LongType, nullable = true)
       )
     )
-
   private lazy val segmentsStruct: StructType =
     StructType(
       Seq(
@@ -53,23 +58,11 @@ object GeoSchema {
         StructField(colDevice, StringType, nullable = true)
       )
     )
-
   private lazy val geographicViewStruct: StructType =
     StructType(
       Seq(
         StructField(colCountryCriterionId, StringType, nullable = true),
         StructField(colLocationType, StringType, nullable = true)
-      )
-    )
-
-  lazy val geographicViewSchema: StructType =
-    StructType(
-      Seq(
-        StructField(colCampaign, campaignStruct, nullable = true),
-        StructField(colAdGroup, adGroupStruct, nullable = true),
-        StructField(colMetrics, metricsStruct, nullable = true),
-        StructField(colSegments, segmentsStruct, nullable = true),
-        StructField(colGeographicView, geographicViewStruct, nullable = true)
       )
     )
 }

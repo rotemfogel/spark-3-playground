@@ -8,7 +8,7 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
 
-abstract class BaseGoogleAdsApp extends ParquetReaderApplication {
+abstract class BaseGoogleAdsApplication extends ParquetReaderApplication {
 
   /** output column of adGroup.labels array
     */
@@ -51,9 +51,9 @@ abstract class BaseGoogleAdsApp extends ParquetReaderApplication {
   /** class specific transformation function
     * to perform on top of the common dataframe
     *
-    * @return
+    * @return DataFrame
     */
-  protected def specificTransformFn: DataFrame => DataFrame = (df: DataFrame) => df
+  protected def specificTransformFn(df: DataFrame)(implicit spark: SQLContext): DataFrame
 
   /** convert NULL numeric values to 0 converted to input column data type
     *
@@ -184,11 +184,13 @@ abstract class BaseGoogleAdsApp extends ParquetReaderApplication {
     * @param p     config parameters
     * @param spark SQLContext
     */
+
   override def invoke(implicit p: ReaderConfig, spark: SQLContext): Unit = {
     val fieldsMap: Map[String, Array[CompoundColumn]] = getFieldsMap
     val selectList: Seq[String]                       = generateSelectList(fieldsMap)
 
     spark.read
+      .option("mergeSchema", "true")
       .parquet(p.inputLocation.get)
       .transform(transformFields(fieldsMap))
       .transform(nullToZero(nullToZeroSchema))

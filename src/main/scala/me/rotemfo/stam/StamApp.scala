@@ -10,6 +10,11 @@ import java.time.{LocalDate, LocalDateTime}
 
 object StamApp extends ParquetReaderApplication {
 
+  /** main entry point for Spork code
+    *
+    * @param p     config parameters
+    * @param spark SQLContext
+    */
   override protected def invoke(implicit p: ReaderConfig, spark: SQLContext): Unit = {
     val start = LocalDate.of(2021, 1, 1)
     val now   = LocalDateTime.now()

@@ -3,11 +3,11 @@ package me.rotemfo.googleads
 import me.rotemfo.common.functions.camelToSnake
 import me.rotemfo.googleads.schema.CommonSchema._
 import me.rotemfo.googleads.schema.KeywordsSchema._
-import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.{DataFrame, SQLContext}
 
 //noinspection DuplicatedCode
-object GoogleAdsKeywords extends BaseGoogleAdsApp {
+object GoogleAdsKeywords extends BaseGoogleAdsApplication {
 
   lazy val colSnakeMatchType: String = camelToSnake(colMatchType)
 
@@ -58,7 +58,9 @@ object GoogleAdsKeywords extends BaseGoogleAdsApp {
     *
     * @return
     */
-  override protected val specificTransformFn: DataFrame => DataFrame = (df: DataFrame) => {
+  override protected def specificTransformFn(
+      df: DataFrame
+  )(implicit spark: SQLContext): DataFrame = {
     val campaignLabels: String = "campaign_labels"
     val adGroupLabels: String  = "ad_group_labels"
     val newDf: DataFrame = df

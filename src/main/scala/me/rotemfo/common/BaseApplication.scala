@@ -73,7 +73,9 @@ abstract class BaseApplication[P <: Product](p: P) extends SparkApp[P] {
 
 abstract class LocalBaseApplication[P <: Product](p: P) extends BaseApplication[P](p) {
   override protected def configSparkSession(p: P, sparkSessionBuilder: SparkSession.Builder): Unit =
-    sparkSessionBuilder.master("local[*]")
+    sparkSessionBuilder
+      .master("local[*]")
+      .config("mapreduce.fileoutputcommitter.algorithm.version", "2")
 }
 
 object BaseApplication {

@@ -6,20 +6,14 @@ import org.apache.spark.sql.types._
 //noinspection DuplicatedCode
 object LandingPagesSchema {
   // @formatter:off
-  lazy val colLandingPageView: String = "landingPageView"
-  lazy val colServingStatus: String   = "servingStatus"
+  lazy val colExpandedFinalUrl: String        = "expandedFinalUrl"
+  lazy val colExpandedLandingPageView: String = "expandedLandingPageView"
+  lazy val colLandingPageView: String         = "landingPageView"
+  lazy val colServingStatus: String           = "servingStatus"
+  lazy val colTrackingUrlTemplate: String     = "trackingUrlTemplate"
+  lazy val colUnexpandedFinalUrl: String      = "unexpandedFinalUrl"
   // @formatter:on
-  lazy val landingPagesSchema: StructType =
-    StructType(
-      Seq(
-        StructField(colCustomer, customerStruct, nullable = true),
-        StructField(colCampaign, campaignStruct, nullable = true),
-        StructField(colAdGroup, adGroupStruct, nullable = true),
-        StructField(colMetrics, metricsStruct, nullable = true),
-        StructField(colSegments, segmentsStruct, nullable = true),
-        StructField(colLandingPageView, landingPageViewStruct, nullable = true)
-      )
-    )
+
   private lazy val customerStruct: StructType =
     StructType(
       Seq(
@@ -32,9 +26,11 @@ object LandingPagesSchema {
         StructField(colBaseCampaign, StringType, nullable = true),
         StructField(colId, StringType, nullable = true),
         StructField(colName, StringType, nullable = true),
-        StructField(colServingStatus, StringType, nullable = true)
+        StructField(colServingStatus, StringType, nullable = true),
+        StructField(colTrackingUrlTemplate, StringType, nullable = true)
       )
     )
+
   private lazy val adGroupStruct: StructType =
     StructType(
       Seq(
@@ -49,6 +45,7 @@ object LandingPagesSchema {
         StructField(colName, StringType, nullable = true)
       )
     )
+
   private lazy val metricsStruct: StructType =
     StructType(
       Seq(
@@ -61,6 +58,7 @@ object LandingPagesSchema {
         StructField(colVideoViews, LongType, nullable = true)
       )
     )
+
   private lazy val segmentsStruct: StructType = StructType(
     Seq(
       StructField(colAdNetworkType, StringType, nullable = true),
@@ -68,17 +66,30 @@ object LandingPagesSchema {
       StructField(colDevice, StringType, nullable = true)
     )
   )
+
   private val landingPageViewStruct: StructType = StructType(
     Seq(
+      StructField(colUnexpandedFinalUrl, StringType, nullable = true),
       StructField(colResourceName, StringType, nullable = true)
     )
   )
 
-  /*
-  root
- |-- landingPageView: struct (nullable = true)
- |    |-- resourceName: string (nullable = true)
- |-- date_: date (nullable = true)
- |-- account_id: long (nullable = true)
-   */
+  private val expandedLandingPageViewStruct: StructType = StructType(
+    Seq(
+      StructField(colExpandedFinalUrl, StringType, nullable = true)
+    )
+  )
+
+  lazy val landingPagesSchema: StructType =
+    StructType(
+      Seq(
+        StructField(colCustomer, customerStruct, nullable = true),
+        StructField(colCampaign, campaignStruct, nullable = true),
+        StructField(colAdGroup, adGroupStruct, nullable = true),
+        StructField(colMetrics, metricsStruct, nullable = true),
+        StructField(colSegments, segmentsStruct, nullable = true),
+        StructField(colLandingPageView, landingPageViewStruct, nullable = true),
+        StructField(colExpandedLandingPageView, expandedLandingPageViewStruct, nullable = true)
+      )
+    )
 }

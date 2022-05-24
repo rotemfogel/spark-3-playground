@@ -1,11 +1,14 @@
 package me.rotemfo.common
 
+import com.google.common.base.Splitter
+import me.rotemfo.common.Schema.colNameUrlParamsRow
 import me.rotemfo.common.UserAgentUtils.parseUserAgent
 import nl.basjes.parse.useragent.UserAgentAnalyzer
 import org.apache.spark.broadcast.Broadcast
-import org.apache.spark.sql.Column
+import org.apache.spark.sql._
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.{get_json_object, lit, udf, when}
+import org.apache.spark.sql.types.StructType
 import org.json4s.jackson.JsonMethods.{compact, render}
 import org.json4s.jackson.Serialization
 import org.json4s.{Extraction, Formats, NoTypeHints}
@@ -100,4 +103,48 @@ object functions {
       m.group(1).toUpperCase()
     }
   )
+
+  import scala.collection.JavaConverters._
+
+  private final def splitter(text: String): String = {
+    val map = Splitter.on('&').trimResults.withKeyValueSeparator('=').split(text).asScala
+    toJson(map)
+  }
+
+  private def urlParamsToJsonString(urlParams: String): String = {
+    splitter(urlParams.split("\\?").last)
+  }
+
+  def urlParamsParser(urlParms: String): Option[String] = {
+    try {
+      if (urlParms == null || urlParms.trim.length == 1 || urlParms.trim.isEmpty) None
+      else Some(urlParamsToJsonString(urlParms))
+    } catch {
+
+      case _: Exception => Some(s"""{"$colNameUrlParamsRow":"$urlParms"}""")
+    }
+  }
+
+  val udfUrlParamsParser: UserDefinedFunction = udf(urlParamsParser _)
+
+  /** Filter fields from a given Json column
+    * recommended for spark 2.4.x and a lot of fieldsToDrop
+    *
+    * @param dataFrame    - the data frame
+    * @param jsonColumn   - the JSON Column
+    * @param fieldsToDrop - the fileds to drop
+    * @param spark        - sparkSQLContext
+    * @return StructType
+    */
+  def getJsonSchema(dataFrame: DataFrame, jsonColumn: Column, fieldsToDrop: Array[String])(implicit
+      spark: SQLContext
+  ): StructType = {
+    val dsCol: Dataset[String] = dataFrame.select(jsonColumn.as[String](Encoders.STRING))
+    if (fieldsToDrop.nonEmpty)
+      StructType(
+        spark.read.json(dsCol).schema.filterNot(field => fieldsToDrop.contains(field.name))
+      )
+    else
+      spark.read.json(dsCol).schema
+  }
 }

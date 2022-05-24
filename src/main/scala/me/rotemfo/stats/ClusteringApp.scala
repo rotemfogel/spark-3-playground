@@ -6,8 +6,15 @@ import org.apache.spark.ml.evaluation.ClusteringEvaluator
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import scopt.OptionParser
 
+//noinspection DuplicatedCode
 object ClusteringApp extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
 
+  /** main entry point for Spork code
+    *
+    * @param p     config parameters
+    * @param spark SQLContext
+    */
+  //noinspection ScalaCustomHdfsFormat
   override protected def invoke(implicit p: EmptyConfig, spark: SQLContext): Unit = {
     def kMeans(dataset: DataFrame): Unit = {
       // Trains a k-means model.
@@ -63,6 +70,7 @@ object ClusteringApp extends LocalBaseApplication[EmptyConfig](EmptyConfig()) {
       }
     }
 
+    //noinspection ScalaCustomHdfsFormat
     def lda(): Unit = {
       // Loads data.
       val dataset = spark.read

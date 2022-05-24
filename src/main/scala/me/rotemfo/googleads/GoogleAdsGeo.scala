@@ -3,12 +3,12 @@ package me.rotemfo.googleads
 import me.rotemfo.common.functions.camelToSnake
 import me.rotemfo.googleads.schema.CommonSchema._
 import me.rotemfo.googleads.schema.GeoSchema._
-import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{col, to_date}
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.{DataFrame, SQLContext}
 
 //noinspection DuplicatedCode
-object GoogleAdsGeoApp extends BaseGoogleAdsApp {
+object GoogleAdsGeo extends BaseGoogleAdsApplication {
 
   /** list of field Mapping root Keys to filter by when flattening the dataframe
     *
@@ -49,7 +49,9 @@ object GoogleAdsGeoApp extends BaseGoogleAdsApp {
     *
     * @return
     */
-  override protected val specificTransformFn: DataFrame => DataFrame = (df: DataFrame) => {
+  override protected def specificTransformFn(
+      df: DataFrame
+  )(implicit spark: SQLContext): DataFrame = {
     val colCampaignStartDate: String = "campaign_start_date"
     df.withColumn(colCampaignStartDate, to_date(col(colCampaignStartDate), "yyyy-MM-dd"))
   }

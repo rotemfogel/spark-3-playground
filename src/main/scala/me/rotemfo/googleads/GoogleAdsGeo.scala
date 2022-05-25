@@ -36,6 +36,7 @@ object GoogleAdsGeo extends BaseGoogleAdsApplication {
         (colClicks, LongType),
         (colConversions, LongType),
         (colCrossDeviceConversions, FloatType),
+        (colCostMicros, LongType),
         (colCtr, FloatType),
         (colImpressions, LongType),
         (colInteractions, LongType),

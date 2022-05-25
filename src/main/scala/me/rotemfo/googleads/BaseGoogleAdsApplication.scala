@@ -184,7 +184,6 @@ abstract class BaseGoogleAdsApplication extends ParquetReaderApplication {
     * @param p     config parameters
     * @param spark SQLContext
     */
-
   override def invoke(implicit p: ReaderConfig, spark: SQLContext): Unit = {
     val fieldsMap: Map[String, Array[CompoundColumn]] = getFieldsMap
     val selectList: Seq[String]                       = generateSelectList(fieldsMap)

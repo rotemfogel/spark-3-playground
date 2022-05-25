@@ -18,7 +18,9 @@ object sql {
 
     def repairColumns: DataFrame = {
       val columns: Array[String] =
-        dataFrame.schema.fields.filter(_.dataType == StringType).map(_.name)
+        dataFrame.schema.fields
+          .filter((_: StructField).dataType == StringType)
+          .map((_: StructField).name)
       dataFrame.repairStringCol(columns: _*)
     }
 
@@ -54,14 +56,15 @@ object sql {
       * @return
       */
     def getKeys(dataFrame: DataFrame, sourceColumnName: String, keys: StructType): DataFrame = {
-      keys.foldLeft(dataFrame) { (df, key) =>
+      keys.foldLeft(dataFrame) { (df: DataFrame, key: StructField) =>
         getKey(df, sourceColumnName, key)
       }
     }
 
     /** convert url_params to
       *
-      * @return
+      * @param urlKeys - columns to extract
+      * @return DataFrame
       */
     def convertUrlParams(urlKeys: StructType = urlParamsKeys): DataFrame = {
       getKeys(
@@ -88,7 +91,7 @@ object sql {
       */
     def withCached[A](storageLevel: StorageLevel = MEMORY_AND_DISK)(f: DataFrame => A): A = {
       dataFrame.persist(storageLevel)
-      val result = f(dataFrame)
+      val result: A = f(dataFrame)
       dataFrame.unpersist
       result
     }
@@ -108,8 +111,8 @@ object sql {
     * @return
     */
   def getUrlFirstLevel(urlColumn: Column, clientTypeColumn: Column): Column = {
-    val colon: String  = ":"
-    val splitUrlColumn = split(urlColumn, "/")
+    val colon: String          = ":"
+    val splitUrlColumn: Column = split(urlColumn, "/")
     when(
       udfEmptyStringToNull(splitUrlColumn.getItem(0)).isNull,
       udfEmptyStringToNull(

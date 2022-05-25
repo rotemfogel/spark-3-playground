@@ -17,7 +17,7 @@ import org.apache.spark.sql.{Column, DataFrame, SQLContext}
 //noinspection DuplicatedCode
 object GoogleAdsLandingPages extends BaseGoogleAdsApplication {
 
-  lazy val urlKeys: StructType = StructType(urlParamsKeys.fields.slice(2, 8))
+  lazy val urlKeys: StructType = StructType(urlParamsKeys.fields.slice(1, 8))
 
   /** list of field Mapping root Keys to filter by when flattening the dataframe
     *
@@ -59,7 +59,10 @@ object GoogleAdsLandingPages extends BaseGoogleAdsApplication {
   override protected def generateSelectList(
       fieldsMap: Map[String, Array[GoogleAdsLandingPages.CompoundColumn]]
   ): Seq[String] = {
-    super.generateSelectList(fieldsMap) ++ urlKeys.fieldNames :+ colNameUrlFirstLevel
+    super.generateSelectList(fieldsMap) ++ urlKeys.fieldNames ++ Array(
+      colNameUrlFirstLevel,
+      colNamePostsUrlParams
+    )
   }
 
   /** class specific transformation function
@@ -79,13 +82,12 @@ object GoogleAdsLandingPages extends BaseGoogleAdsApplication {
       )
       // create url (same as in page_events)
       .withColumn(colNamePostsUrl, regexp_extract(snakeExpandedFinalUrl, ".*\\.com(.*)$", 1))
-      .withColumn(colNamePostsUrl, split(col(colNamePostsUrl), "\\?").getItem(0))
       // create url_first_level
       .withColumn(colNameUrlFirstLevel, getUrlFirstLevel(col(colNamePostsUrl)))
       .drop(colNamePostsUrl)
       // convert url_params to JSON
       .convertUrlParams(urlKeys)
-      .withCached { urlDf =>
+      .withCached { (urlDf: DataFrame) =>
         urlDf
           .withColumn(
             colNamePostsUrlParams,

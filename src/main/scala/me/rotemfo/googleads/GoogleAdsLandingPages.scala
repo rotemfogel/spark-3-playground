@@ -59,10 +59,12 @@ object GoogleAdsLandingPages extends BaseGoogleAdsApplication {
   override protected def generateSelectList(
       fieldsMap: Map[String, Array[GoogleAdsLandingPages.CompoundColumn]]
   ): Seq[String] = {
-    super.generateSelectList(fieldsMap) ++ urlKeys.fieldNames ++ Array(
-      colNameUrlFirstLevel,
-      colNamePostsUrlParams
-    )
+    // @formatter:off
+    super.generateSelectList(fieldsMap) ++
+      // drop `source` column
+      urlKeys.fieldNames.drop(1) ++
+      Array(colNameUrlFirstLevel, colNamePostsUrlParams)
+    // @formatter:on
   }
 
   /** class specific transformation function

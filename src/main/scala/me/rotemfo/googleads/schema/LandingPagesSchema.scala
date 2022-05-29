@@ -10,7 +10,6 @@ object LandingPagesSchema {
   lazy val colExpandedLandingPageView: String = "expandedLandingPageView"
   lazy val colLandingPageView: String         = "landingPageView"
   lazy val colServingStatus: String           = "servingStatus"
-  lazy val colTrackingUrlTemplate: String     = "trackingUrlTemplate"
   lazy val colUnexpandedFinalUrl: String      = "unexpandedFinalUrl"
   // @formatter:on
 
@@ -26,8 +25,7 @@ object LandingPagesSchema {
         StructField(colBaseCampaign, StringType, nullable = true),
         StructField(colId, StringType, nullable = true),
         StructField(colName, StringType, nullable = true),
-        StructField(colServingStatus, StringType, nullable = true),
-        StructField(colTrackingUrlTemplate, StringType, nullable = true)
+        StructField(colServingStatus, StringType, nullable = true)
       )
     )
 
@@ -53,6 +51,7 @@ object LandingPagesSchema {
         StructField(colAverageCpc, FloatType, nullable = true),
         StructField(colClicks, LongType, nullable = true),
         StructField(colConversions, LongType, nullable = true),
+        StructField(colCostMicros, LongType, nullable = true),
         StructField(colEngagements, LongType, nullable = true),
         StructField(colImpressions, LongType, nullable = true),
         StructField(colVideoViews, LongType, nullable = true)

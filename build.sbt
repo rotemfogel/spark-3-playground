@@ -6,26 +6,26 @@ scalaVersion := "2.12.15"
 
 // @formatter:off
 libraryDependencies ++= {
-  val sparkVersion = "3.1.2"
-  val deequVersion = "2.0.0-spark-3.1"
-  val log4jVersion = "2.17.1"
-  val yauaaVersion = "6.8"
+  val sparkVersion = "3.2.1"
+  val deequVersion = "2.0.1-spark-3.2"
+  val log4jVersion = "2.17.2"
+  val yauaaVersion = "7.2.0"
   Seq(
     "org.apache.spark"          %% "spark-mllib"   % sparkVersion, // % Provided,
-    "org.apache.hadoop"          % "hadoop-aws"    % "3.3.1"      % Provided,
+    "org.apache.hadoop"          % "hadoop-aws"    % "3.3.2"      % Provided,
     "com.github.scopt"          %% "scopt"         % "4.0.1",
-    "com.typesafe"               % "config"        % "1.4.1",
+    "com.typesafe"               % "config"        % "1.4.2",
     "com.amazon.deequ"           % "deequ"         % deequVersion,
     "nl.basjes.parse.useragent"  % "yauaa"         % yauaaVersion,
     "org.apache.logging.log4j"   % "log4j-core"    % log4jVersion,
-    "com.nrinaudo"              %% "kantan.csv"    % "0.6.2",
-    "org.scalatest"             %% "scalatest"     % "3.0.5"      % Test
+    "org.scalatest"             %% "scalatest"     % "3.2.12"     % Test
   )
 }
 // @formatter:on
 
 scalacOptions ++= Seq(
-  "-encoding", "UTF-8",
+  "-encoding",
+  "UTF-8",
   "-target:jvm-1.8",
   "-deprecation",
   "-feature",
@@ -39,4 +39,3 @@ scalacOptions ++= Seq(
   "-Ywarn-nullary-unit",
   "-Ywarn-unused-import"
 )
-

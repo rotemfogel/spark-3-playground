@@ -7,6 +7,7 @@ import org.apache.spark.sql.types._
 object KeywordsSchema {
   // @formatter:off
   lazy val colAdGroupCriterion: String                  = "adGroupCriterion"
+  lazy val colCriterionId: String                       = "criterionId"
   lazy val colHistoricalCreativeQualityScore: String    = "historicalCreativeQualityScore"
   lazy val colHistoricalLandingPageQualityScore: String = "historicalLandingPageQualityScore"
   lazy val colHistoricalQualityScore: String            = "historicalQualityScore"
@@ -70,17 +71,23 @@ object KeywordsSchema {
       )
     )
 
-  //  private lazy val adGroupCriterionStruct: StructType =
-  //    StructType(
-  //      Seq(
-  //        StructField(colKeyword, StructType(
-  //          Seq(
-  //            StructField(colMatchType, StringType, nullable = true),
-  //            StructField(colText, StringType, nullable = true)
-  //          )
-  //        ), nullable = true)
-  //      )
-  //    )
+  private lazy val adGroupCriterionStruct: StructType =
+    StructType(
+      Seq(
+        StructField(colCriterionId, StringType, nullable = true)
+        //        @Rotem: these fields are always returned in the schema, so no need for special treatment
+        //        StructField(
+        //          colKeyword,
+        //          StructType(
+        //            Seq(
+        //              StructField(colMatchType, StringType, nullable = true),
+        //              StructField(colText, StringType, nullable = true)
+        //            )
+        //          ),
+        //          nullable = true
+        //        )
+      )
+    )
 
   private lazy val segmentsStruct: StructType =
     StructType(
@@ -102,7 +109,7 @@ object KeywordsSchema {
         StructField(colCampaign, campaignStruct, nullable = true),
         StructField(colAdGroup, adGroupStruct, nullable = true),
         StructField(colMetrics, metricsStruct, nullable = true),
-        // StructField(colAdGroupCriterion, adGroupCriterionStruct, nullable = true),
+        StructField(colAdGroupCriterion, adGroupCriterionStruct, nullable = true),
         StructField(colSegments, segmentsStruct, nullable = true),
         StructField(colKeywordsView, keywordsViewStruct, nullable = true)
       )

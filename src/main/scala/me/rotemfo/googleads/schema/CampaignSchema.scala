@@ -10,6 +10,7 @@ object CampaignSchema {
   lazy val colAmountMicros: String           = "amountMicros"
   lazy val colBiddingStrategyType: String    = "biddingStrategyType"
   lazy val colCampaignBudget: String         = "campaignBudget"
+  lazy val colCampaignGroup: String         = "campaignGroup"
   lazy val colExperimentType: String         = "experimentType"
   lazy val colHour: String                   = "hour"
   // @formatter:on
@@ -20,6 +21,7 @@ object CampaignSchema {
         StructField(colId, StringType, nullable = true),
         StructField(colName, StringType, nullable = true),
         StructField(colStatus, StringType, nullable = true),
+        StructField(colCampaignGroup, StringType, nullable = true),
         StructField(colAdvertisingChannelType, StringType, nullable = true),
         StructField(colBaseCampaign, StringType, nullable = true),
         StructField(colBiddingStrategyType, StringType, nullable = true),

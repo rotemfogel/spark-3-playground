@@ -15,7 +15,8 @@ object GoogleAdsKeywords extends BaseGoogleAdsApplication {
     *
     * @return Sequence of Strings
     */
-  override protected val fieldMappingFilters: Seq[String] = Seq(colCampaign, colAdGroup)
+  override protected val fieldMappingFilters: Seq[String] =
+    Seq(colCampaign, colAdGroup, colAdGroupCriterion)
 
   /** the schema from which the code extracts the dataframe
     *

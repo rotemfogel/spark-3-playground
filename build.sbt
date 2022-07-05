@@ -6,8 +6,8 @@ scalaVersion := "2.12.15"
 
 // @formatter:off
 libraryDependencies ++= {
-  val sparkVersion = "3.2.1"
-  val deequVersion = "2.0.1-spark-3.2"
+  val sparkVersion = "3.1.2"
+  val deequVersion = "2.0.0-spark-3.1"
   val log4jVersion = "2.17.2"
   val yauaaVersion = "7.2.0"
   Seq(
@@ -18,7 +18,8 @@ libraryDependencies ++= {
     "com.amazon.deequ"           % "deequ"         % deequVersion,
     "nl.basjes.parse.useragent"  % "yauaa"         % yauaaVersion,
     "org.apache.logging.log4j"   % "log4j-core"    % log4jVersion,
-    "org.scalatest"             %% "scalatest"     % "3.2.12"     % Test
+    "com.nrinaudo"              %% "kantan.csv"    % "0.6.2",
+    "org.scalatest"             %% "scalatest"     % "3.0.5"      % Test
   )
 }
 // @formatter:on

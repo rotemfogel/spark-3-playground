@@ -7,6 +7,7 @@ import org.apache.spark.sql.types._
 object KeywordsSchema {
   // @formatter:off
   lazy val colAdGroupCriterion: String                  = "adGroupCriterion"
+  lazy val colAverageCost: String                       = "averageCost"
   lazy val colCriterionId: String                       = "criterionId"
   lazy val colHistoricalCreativeQualityScore: String    = "historicalCreativeQualityScore"
   lazy val colHistoricalLandingPageQualityScore: String = "historicalLandingPageQualityScore"
@@ -55,9 +56,12 @@ object KeywordsSchema {
       Seq(
         StructField(colAbsoluteTopImpressionPercentage, FloatType, nullable = true),
         StructField(colAllConversions, LongType, nullable = true),
+        StructField(colAverageCost, FloatType, nullable = true),
         StructField(colAverageCpc, FloatType, nullable = true),
         StructField(colClicks, LongType, nullable = true),
+        StructField(colCostMicros, LongType, nullable = true),
         StructField(colConversions, FloatType, nullable = true),
+        StructField(colCtr, FloatType, nullable = true),
         StructField(colEngagements, LongType, nullable = true),
         StructField(colHistoricalCreativeQualityScore, StringType, nullable = true),
         StructField(colHistoricalLandingPageQualityScore, StringType, nullable = true),

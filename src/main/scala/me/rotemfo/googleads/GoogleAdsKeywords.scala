@@ -35,9 +35,12 @@ object GoogleAdsKeywords extends BaseGoogleAdsApplication {
       Seq(
         (colAbsoluteTopImpressionPercentage, FloatType),
         (colAllConversions, LongType),
+        (colAverageCost, FloatType),
         (colAverageCpc, FloatType),
         (colClicks, LongType),
         (colConversions, FloatType),
+        (colCostMicros, LongType),
+        (colCtr, FloatType),
         (colEngagements, LongType),
         (colHistoricalQualityScore, IntegerType),
         (colImpressions, LongType),
